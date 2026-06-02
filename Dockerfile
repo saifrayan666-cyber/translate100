@@ -1,7 +1,14 @@
 FROM python:3.10-slim
 
-# Install ffmpeg
-RUN apt-get update && apt-get install -y ffmpeg && apt-get clean
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    tesseract-ocr-ben \
+    tesseract-ocr-hin \
+    tesseract-ocr-ara \
+    && apt-get clean
 
 WORKDIR /app
 
