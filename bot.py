@@ -1,9 +1,9 @@
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 
-# Railway তে Environment Variable থেকে টোকেন নিবে
+# Railway Environment Variable থেকে টোকেন নেওয়া
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 user_lang = {}
@@ -15,15 +15,13 @@ LANG_MAP = {
     'hi': '🇮🇳 हिन्दी',
     'ja': '🇯🇵 日本語',
     'ko': '🇰🇷 한국어',
-    'zh-cn': '🇨🇳 中文',
+    'zh-cn': '🇨🇳 中文 (Simplified)',
     'es': '🇪🇸 Español',
     'fr': '🇫🇷 Français',
     'de': '🇩🇪 Deutsch',
     'ru': '🇷🇺 Русский',
     'bn-en': '🔤 বাংলিশ (Auto Detect)'
 }
-
-translator = Translator()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -115,15 +113,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     src = user_lang[user_id]['from']
     dest = user_lang[user_id]['to']
 
+    # বাংলিশ হলে source 'auto' করে দেবো
     if src == 'bn-en':
         src = 'auto'
 
     try:
         await update.message.chat.send_action('typing')
-        result = translator.translate(text, src=src, dest=dest)
+        
+        # deep-translator ব্যবহার করে অনুবাদ
+        translated = GoogleTranslator(source=src, target=dest).translate(text)
+        
         response = (
             f"📤 *Original:*\n{text}\n\n"
-            f"📥 *Translated ({LANG_MAP.get(dest, dest)}):*\n{result.text}"
+            f"📥 *Translated ({LANG_MAP.get(dest, dest)}):*\n{translated}"
         )
         await update.message.reply_text(response, parse_mode='Markdown')
     except Exception as e:
@@ -133,9 +135,8 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"Update {update} caused error {context.error}")
 
 def main():
-    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
     if not TOKEN:
-        print("❌ TELEGRAM_BOT_TOKEN পাওয়া যায়নি!")
+        print("❌ TELEGRAM_BOT_TOKEN পাওয়া যায়নি! Railway Variables চেক করুন।")
         return
     
     app = Application.builder().token(TOKEN).build()
