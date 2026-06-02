@@ -10,3 +10,4 @@ PyPDF2==3.0.1
 python-docx==1.1.2
 gTTS==2.5.4
 requests==2.32.3
+rembg==2.0.60
