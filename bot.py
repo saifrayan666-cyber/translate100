@@ -7,7 +7,7 @@ import urllib.parse
 from datetime import datetime, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
-from deep_translator import GoogleTranslator
+from translate import Translator as GoogleTranslate  # <-- নতুন লাইব্রেরি
 import speech_recognition as sr
 from PIL import Image, ImageFilter, ImageEnhance, ImageDraw, ImageFont
 import pytesseract
@@ -60,6 +60,14 @@ LANG_MAP = {
     'it': 'Italian', 'tr': 'Turkish',
     'bn-en': 'Banglish (Roman Bengali → English)',
     'auto': 'Auto Detect'
+}
+
+# Language codes for 'translate' library (different from Google's)
+LANG_CODE_MAP = {
+    'en': 'en', 'bn': 'bn', 'ar': 'ar', 'hi': 'hi',
+    'ja': 'ja', 'ko': 'ko', 'zh-cn': 'zh-CN', 'es': 'es',
+    'fr': 'fr', 'de': 'de', 'ru': 'ru', 'pt': 'pt',
+    'it': 'it', 'tr': 'tr', 'auto': 'auto'
 }
 
 # ============ HELPER FUNCTIONS ============
@@ -353,7 +361,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(f"Main Menu\nBalance: {credits} credits", reply_markup=InlineKeyboardMarkup(keyboard))
 
     elif data == "banglish_quick":
-        # Banglish → English ফিক্সড মোড
         user_lang[user_id] = {'from': 'bn-en', 'to': 'en'}
         await query.edit_message_text(
             "Banglish → English Mode Active!\n\n"
@@ -543,7 +550,7 @@ Admin:
         await query.edit_message_text(help_text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Back", callback_data="main_menu")]]))
 
 
-# ============ TEXT HANDLER (Banglish Fixed) ============
+# ============ TEXT HANDLER (FIXED TRANSLATION) ============
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     text = update.message.text
@@ -568,7 +575,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         result = f"Original:\n{text}\n\n"
         for lang in langs:
             try:
-                trans = GoogleTranslator(source='auto', target=lang).translate(text)
+                translator = GoogleTranslate(from_lang='auto', to_lang=LANG_CODE_MAP[lang])
+                trans = translator.translate(text)
                 result += f"{LANG_MAP[lang]}:\n{trans}\n\n"
             except:
                 pass
@@ -584,7 +592,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(f"Need {CREDIT_COSTS['transliteration']} credits!")
             return
         try:
-            trans = GoogleTranslator(source='bn', target='en').translate(text)
+            translator = GoogleTranslate(from_lang='bn', to_lang='en')
+            trans = translator.translate(text)
             await update.message.reply_text(f"Banglish:\n{trans}\n\n{CREDIT_COSTS['transliteration']} credits used")
         except:
             await update.message.reply_text("Transliteration failed")
@@ -661,15 +670,19 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         src = user_lang[user_id]['from']
         dest = user_lang[user_id]['to']
         
-        # Banglish এর জন্য source='bn' ব্যবহার করব (Google রোমানাইজড বাংলা চিনবে)
+        # Banglish -> source = 'bn' (translate library রোমানাইজড বাংলা চিনতে পারে)
         if src == 'bn-en':
-            src = 'bn'   # ← এটাই ফিক্স! আগে 'auto' দিলে চিনতে পারছিল না
+            src_code = 'bn'
+        else:
+            src_code = LANG_CODE_MAP.get(src, 'auto')
+        
+        dest_code = LANG_CODE_MAP.get(dest, 'en')
         
         try:
             await update.message.chat.send_action('typing')
-            translated = GoogleTranslator(source=src, target=dest).translate(text)
+            translator = GoogleTranslate(from_lang=src_code, to_lang=dest_code)
+            translated = translator.translate(text)
             
-            # কপি-ফ্রেন্ডলি আউটপুট
             response = f"Original:\n{text}\n\nTranslated ({LANG_MAP.get(dest, dest)}):\n{translated}\n\nFREE"
             await update.message.reply_text(response)
         except Exception as e:
@@ -723,8 +736,12 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         src = user_lang.get(user_id, {}).get('from', 'auto')
         dest = user_lang.get(user_id, {}).get('to', 'en')
-        if src == 'bn-en': src = 'bn'
-        translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(text[:1500])
+        if src == 'bn-en': src_code = 'bn'
+        else: src_code = LANG_CODE_MAP.get(src, 'auto')
+        dest_code = LANG_CODE_MAP.get(dest, 'en')
+        
+        translator = GoogleTranslate(from_lang=src_code, to_lang=dest_code)
+        translated = translator.translate(text[:1500])
         
         await update.message.reply_text(f"Translated:\n{translated[:1000]}...\n\n{CREDIT_COSTS['document_translate']} credits used")
     except Exception as e:
@@ -764,8 +781,12 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
             src = user_lang.get(user_id, {}).get('from', 'auto')
             dest = user_lang.get(user_id, {}).get('to', 'en')
-            if src == 'bn-en': src = 'bn'
-            translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(text[:500])
+            if src == 'bn-en': src_code = 'bn'
+            else: src_code = LANG_CODE_MAP.get(src, 'auto')
+            dest_code = LANG_CODE_MAP.get(dest, 'en')
+            
+            translator = GoogleTranslate(from_lang=src_code, to_lang=dest_code)
+            translated = translator.translate(text[:500])
             
             await update.message.reply_text(f"OCR:\n{text[:300]}\n\nTranslated:\n{translated[:500]}\n\n{CREDIT_COSTS['ocr_translate']} credits used")
         except Exception as e:
@@ -873,7 +894,10 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     src = user_lang[user_id]['from']
     dest = user_lang[user_id]['to']
-    if src == 'bn-en': src = 'bn'   # Banglish voice fix
+    if src == 'bn-en': src_code = 'bn'
+    else: src_code = LANG_CODE_MAP.get(src, 'auto')
+    dest_code = LANG_CODE_MAP.get(dest, 'en')
+    
     processing_msg = await update.message.reply_text("Processing voice...")
 
     try:
@@ -905,7 +929,8 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
             os.remove(wav_path)
         except: pass
 
-        translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(detected_text)
+        translator = GoogleTranslate(from_lang=src_code, to_lang=dest_code)
+        translated = translator.translate(detected_text)
 
         await processing_msg.edit_text(f"Voice:\n{detected_text}\n\nTranslated:\n{translated}\n\nFREE")
     except sr.UnknownValueError:
