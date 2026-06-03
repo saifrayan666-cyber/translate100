@@ -1,5 +1,5 @@
 python-telegram-bot==20.8
-deep-translator==1.11.4
+translate==3.6.1
 SpeechRecognition==3.10.4
 pydub==0.25.1
 python-dotenv==1.1.0
