@@ -33,6 +33,7 @@ referral_codes = {}
 CREDIT_COSTS = {
     'translate': 0,
     'voice_translate': 0,
+    'banglish_translate': 0,    # ← Banglish FREE
     'document_translate': 3,
     'ocr_translate': 2,
     'multi_translate': 2,
@@ -57,7 +58,9 @@ LANG_MAP = {
     'hi': 'Hindi', 'ja': 'Japanese', 'ko': 'Korean',
     'zh-cn': 'Chinese', 'es': 'Spanish', 'fr': 'French',
     'de': 'German', 'ru': 'Russian', 'pt': 'Portuguese',
-    'it': 'Italian', 'tr': 'Turkish', 'auto': 'Auto Detect'
+    'it': 'Italian', 'tr': 'Turkish',
+    'bn-en': 'Banglish (Auto Detect)',   # ← Banglish যোগ
+    'auto': 'Auto Detect'
 }
 
 # ============ HELPER FUNCTIONS ============
@@ -149,6 +152,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 🆓 *FREE Features:*
 • Text Translation
 • Voice Translation
+• 🇧🇩 Banglish → English (Auto)
 
 💎 *Premium (Need Credits):*
 • 📄 Document Translate (3cr)
@@ -168,8 +172,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 📨 Your Referral Code: `{ref_code}`
 """
     keyboard = [
-        [InlineKeyboardButton("📝 FREE Translate", callback_data="set_mode")],
-        [InlineKeyboardButton("🎙 FREE Voice Translate", callback_data="voice_info")],
+        [InlineKeyboardButton("🇧🇩 Banglish → English (FREE)", callback_data="banglish_quick")],
+        [InlineKeyboardButton("📝 Set Translate Mode", callback_data="set_mode")],
+        [InlineKeyboardButton("🎙 Voice Translate", callback_data="voice_info")],
         [InlineKeyboardButton("📄 Document Translate (3cr)", callback_data="doc_translate")],
         [InlineKeyboardButton("📸 OCR Translate (2cr)", callback_data="ocr_translate")],
         [InlineKeyboardButton("🌐 Multi-Language (2cr)", callback_data="multi_translate")],
@@ -323,10 +328,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     data = query.data
     credits = get_credits(user_id)
 
+    # Main menu
     if data == "main_menu":
         keyboard = [
-            [InlineKeyboardButton("📝 FREE Translate", callback_data="set_mode")],
-            [InlineKeyboardButton("🎙 FREE Voice", callback_data="voice_info")],
+            [InlineKeyboardButton("🇧🇩 Banglish → English (FREE)", callback_data="banglish_quick")],
+            [InlineKeyboardButton("📝 Set Translate Mode", callback_data="set_mode")],
+            [InlineKeyboardButton("🎙 Voice Translate", callback_data="voice_info")],
             [InlineKeyboardButton("📄 Document", callback_data="doc_translate")],
             [InlineKeyboardButton("📸 OCR", callback_data="ocr_translate")],
             [InlineKeyboardButton("🌐 Multi-Lang", callback_data="multi_translate")],
@@ -347,6 +354,20 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         await query.edit_message_text(f"🏠 *Main Menu*\n💰 Balance: {credits} credits", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
 
+    # Banglish quick set
+    elif data == "banglish_quick":
+        # সরাসরি Banglish → English সেট করে দাও
+        user_lang[user_id] = {'from': 'bn-en', 'to': 'en'}
+        await query.edit_message_text(
+            "🇧🇩 *Banglish → English Mode Active!*\n\n"
+            "এখন তুমি Banglish (Roman Bengali) টাইপ করলেই বট অটো ইংরেজি অনুবাদ করে দেবে।\n\n"
+            "উদাহরণ:\n"
+            "• `ami tomake bhalobashi` → I love you\n"
+            "• `tumi kemon acho` → How are you\n\n"
+            "🆓 সম্পূর্ণ ফ্রি!",
+            parse_mode='Markdown'
+        )
+
     elif data == "set_mode":
         keyboard = []
         for code, name in LANG_MAP.items():
@@ -360,7 +381,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_lang[user_id] = {'from': from_lang}
         keyboard = []
         for code, name in LANG_MAP.items():
-            if code != from_lang and code != 'auto':
+            if code != from_lang and code != 'auto' and code != 'bn-en':
                 keyboard.append([InlineKeyboardButton(name, callback_data=f"to_{code}")])
         keyboard.append([InlineKeyboardButton("🔙 Back", callback_data="set_mode")])
         await query.edit_message_text(f"✅ From: *{LANG_MAP[from_lang]}*\n\n*To Language:*", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
@@ -508,6 +529,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 🆓 *FREE:*
 • Text & Voice Translation
+• 🇧🇩 Banglish → English
 
 💎 *Premium (Need Credits):*
 • Document/OCR/Multi Translate
@@ -633,16 +655,25 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_state.pop(user_id, None)
         return
 
-    # FREE Translation
+    # ========== NORMAL TRANSLATION (including Banglish) ==========
     if user_id in user_lang and 'to' in user_lang[user_id]:
         src = user_lang[user_id]['from']
         dest = user_lang[user_id]['to']
+        
+        # Banglish -> use auto detect
+        if src == 'bn-en':
+            src = 'auto'
+        
         try:
             await update.message.chat.send_action('typing')
-            translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(text)
-            await update.message.reply_text(f"📤 *Original:*\n{text}\n\n📥 *Translated ({LANG_MAP[dest]}):*\n{translated}\n\n🆓 FREE", parse_mode='Markdown')
-        except:
-            await update.message.reply_text("❌ Translation failed")
+            translated = GoogleTranslator(source=src, target=dest).translate(text)
+            await update.message.reply_text(
+                f"📤 *Original:*\n{text}\n\n📥 *Translated ({LANG_MAP.get(dest, dest)}):*\n{translated}\n\n"
+                + ("🆓 FREE" if CREDIT_COSTS.get('translate', 0) == 0 else f"💰 {CREDIT_COSTS['translate']}cr used"),
+                parse_mode='Markdown'
+            )
+        except Exception as e:
+            await update.message.reply_text(f"❌ Translation failed: {e}")
         return
 
     if not user_state.get(user_id):
@@ -692,6 +723,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         src = user_lang.get(user_id, {}).get('from', 'auto')
         dest = user_lang.get(user_id, {}).get('to', 'en')
+        if src == 'bn-en': src = 'auto'
         translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(text[:1500])
         
         await update.message.reply_text(f"📄 *Translated:*\n{translated[:1000]}...\n\n💰 {CREDIT_COSTS['document_translate']}cr used", parse_mode='Markdown')
@@ -732,6 +764,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
             src = user_lang.get(user_id, {}).get('from', 'auto')
             dest = user_lang.get(user_id, {}).get('to', 'en')
+            if src == 'bn-en': src = 'auto'
             translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(text[:500])
             
             await update.message.reply_text(f"📸 *OCR:*\n{text[:300]}\n\n🌐 *Translated:*\n{translated[:500]}\n\n💰 {CREDIT_COSTS['ocr_translate']}cr used", parse_mode='Markdown')
@@ -840,6 +873,7 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     src = user_lang[user_id]['from']
     dest = user_lang[user_id]['to']
+    if src == 'bn-en': src = 'auto'   # Banglish voice
     processing_msg = await update.message.reply_text("🎙 Processing...")
 
     try:
