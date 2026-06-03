@@ -33,7 +33,7 @@ referral_codes = {}
 CREDIT_COSTS = {
     'translate': 0,
     'voice_translate': 0,
-    'banglish_translate': 0,    # ← Banglish FREE
+    'banglish_translate': 0,
     'document_translate': 3,
     'ocr_translate': 2,
     'multi_translate': 2,
@@ -52,14 +52,13 @@ DAILY_BONUS = 3
 DEFAULT_CREDITS = 10
 REFERRAL_BONUS = 15
 
-# ============ LANGUAGE MAP ============
 LANG_MAP = {
     'en': 'English', 'bn': 'Bengali', 'ar': 'Arabic',
     'hi': 'Hindi', 'ja': 'Japanese', 'ko': 'Korean',
     'zh-cn': 'Chinese', 'es': 'Spanish', 'fr': 'French',
     'de': 'German', 'ru': 'Russian', 'pt': 'Portuguese',
     'it': 'Italian', 'tr': 'Turkish',
-    'bn-en': 'Banglish (Auto Detect)',   # ← Banglish যোগ
+    'bn-en': 'Banglish (Roman Bengali → English)',
     'auto': 'Auto Detect'
 }
 
@@ -120,7 +119,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = user.id
     
     if user_id in banned_users:
-        await update.message.reply_text("❌ You are banned from using this bot.")
+        await update.message.reply_text("You are banned.")
         return
     
     save_user(user_id)
@@ -141,75 +140,75 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     referral_codes[ref_code] = user_id
     
     msg = f"""
-🎉 *Welcome, {user.first_name}!*
+Welcome, {user.first_name}!
 
-👤 *Your Info:*
-• Name: {user.full_name}
-• Username: @{user.username if user.username else 'N/A'}
-• ID: `{user.id}`
-• Balance: `{credits}` Credits
+Your Info:
+- Name: {user.full_name}
+- Username: @{user.username if user.username else 'N/A'}
+- ID: {user.id}
+- Balance: {credits} Credits
 
-🆓 *FREE Features:*
-• Text Translation
-• Voice Translation
-• 🇧🇩 Banglish → English (Auto)
+FREE Features:
+- Text Translation
+- Voice Translation
+- Banglish → English (Auto)
 
-💎 *Premium (Need Credits):*
-• 📄 Document Translate (3cr)
-• 📸 OCR Translate (2cr)
-• 🌐 Multi-Language (2cr)
-• 🔤 Transliteration (1cr)
-• 🎨 AI Image Gen (5cr)
-• 🖼 BG Remove (3cr)
-• ✨ Image Enhance (2cr)
-• 🎬 Video to GIF (5cr)
-• 🎵 Audio to Text (3cr)
-• 😂 Meme Generator (3cr)
-• 🏷 Sticker Maker (2cr)
-• 🎤 Voice Clone (15cr)
+Premium (Need Credits):
+- Document Translate (3cr)
+- OCR Translate (2cr)
+- Multi-Language (2cr)
+- Transliteration (1cr)
+- AI Image Gen (5cr)
+- BG Remove (3cr)
+- Image Enhance (2cr)
+- Video to GIF (5cr)
+- Audio to Text (3cr)
+- Meme Generator (3cr)
+- Sticker Maker (2cr)
+- Voice Clone (15cr)
 
-🎁 /daily - Get {DAILY_BONUS} free credits
-📨 Your Referral Code: `{ref_code}`
+/daily - Get {DAILY_BONUS} free credits
+Your Referral Code: {ref_code}
 """
     keyboard = [
-        [InlineKeyboardButton("🇧🇩 Banglish → English (FREE)", callback_data="banglish_quick")],
-        [InlineKeyboardButton("📝 Set Translate Mode", callback_data="set_mode")],
-        [InlineKeyboardButton("🎙 Voice Translate", callback_data="voice_info")],
-        [InlineKeyboardButton("📄 Document Translate (3cr)", callback_data="doc_translate")],
-        [InlineKeyboardButton("📸 OCR Translate (2cr)", callback_data="ocr_translate")],
-        [InlineKeyboardButton("🌐 Multi-Language (2cr)", callback_data="multi_translate")],
-        [InlineKeyboardButton("🔤 Transliteration (1cr)", callback_data="transliteration")],
-        [InlineKeyboardButton("🎨 AI Image Gen (5cr)", callback_data="ai_image")],
-        [InlineKeyboardButton("🖼 BG Remove (3cr)", callback_data="bg_remove")],
-        [InlineKeyboardButton("✨ Image Enhance (2cr)", callback_data="image_enhance")],
-        [InlineKeyboardButton("🎬 Video to GIF (5cr)", callback_data="video_to_gif")],
-        [InlineKeyboardButton("🎵 Audio to Text (3cr)", callback_data="audio_to_text")],
-        [InlineKeyboardButton("😂 Meme Generator (3cr)", callback_data="meme_gen")],
-        [InlineKeyboardButton("🏷 Sticker Maker (2cr)", callback_data="sticker_make")],
-        [InlineKeyboardButton("🎤 Voice Clone (15cr)", callback_data="voice_clone")],
-        [InlineKeyboardButton("💰 My Credits", callback_data="my_credits")],
-        [InlineKeyboardButton("ℹ️ Help", callback_data="help")]
+        [InlineKeyboardButton("Banglish → English (FREE)", callback_data="banglish_quick")],
+        [InlineKeyboardButton("Set Translate Mode", callback_data="set_mode")],
+        [InlineKeyboardButton("Voice Translate", callback_data="voice_info")],
+        [InlineKeyboardButton("Document Translate (3cr)", callback_data="doc_translate")],
+        [InlineKeyboardButton("OCR Translate (2cr)", callback_data="ocr_translate")],
+        [InlineKeyboardButton("Multi-Language (2cr)", callback_data="multi_translate")],
+        [InlineKeyboardButton("Transliteration (1cr)", callback_data="transliteration")],
+        [InlineKeyboardButton("AI Image Gen (5cr)", callback_data="ai_image")],
+        [InlineKeyboardButton("BG Remove (3cr)", callback_data="bg_remove")],
+        [InlineKeyboardButton("Image Enhance (2cr)", callback_data="image_enhance")],
+        [InlineKeyboardButton("Video to GIF (5cr)", callback_data="video_to_gif")],
+        [InlineKeyboardButton("Audio to Text (3cr)", callback_data="audio_to_text")],
+        [InlineKeyboardButton("Meme Generator (3cr)", callback_data="meme_gen")],
+        [InlineKeyboardButton("Sticker Maker (2cr)", callback_data="sticker_make")],
+        [InlineKeyboardButton("Voice Clone (15cr)", callback_data="voice_clone")],
+        [InlineKeyboardButton("My Credits", callback_data="my_credits")],
+        [InlineKeyboardButton("Help", callback_data="help")]
     ]
     
     if user_id == ADMIN_ID:
-        keyboard.append([InlineKeyboardButton("👑 ADMIN PANEL", callback_data="admin_panel")])
+        keyboard.append([InlineKeyboardButton("ADMIN PANEL", callback_data="admin_panel")])
     
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(msg, parse_mode='Markdown', reply_markup=reply_markup)
+    await update.message.reply_text(msg, reply_markup=reply_markup)
 
 
-# ============ DAILY COMMAND ============
+# ============ DAILY ============
 async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     today = datetime.now().date()
     
     if user_id in user_daily and user_daily[user_id] == today:
-        await update.message.reply_text("⏰ Already claimed today! Come back tomorrow.")
+        await update.message.reply_text("Already claimed today! Come back tomorrow.")
         return
     
     add_credits(user_id, DAILY_BONUS)
     user_daily[user_id] = today
-    await update.message.reply_text(f"✅ Daily Bonus: +{DAILY_BONUS} credits!\n💰 Balance: {get_credits(user_id)}")
+    await update.message.reply_text(f"Daily Bonus: +{DAILY_BONUS} credits!\nBalance: {get_credits(user_id)}")
 
 
 # ============ ADMIN COMMANDS ============
@@ -221,21 +220,21 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total_credits = sum(user_credits.values())
     
     msg = f"""
-📊 *Bot Statistics*
-👥 Users: {total}
-💰 Credits: {total_credits}
-🔄 Active: {len(user_lang)}
-🚫 Banned: {len(banned_users)}
-✅ Status: Online
+Bot Statistics
+Users: {total}
+Credits: {total_credits}
+Active: {len(user_lang)}
+Banned: {len(banned_users)}
+Status: Online
 
-📋 Commands:
+Commands:
 /givecredits id amount
 /banuser id
 /unbanuser id
 /broadcast message
 /backup
 """
-    await update.message.reply_text(msg, parse_mode='Markdown')
+    await update.message.reply_text(msg)
 
 
 async def givecredits_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -248,9 +247,9 @@ async def givecredits_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         save_user(target_id)
         add_credits(target_id, amount)
         
-        await update.message.reply_text(f"✅ Added {amount} credits to {target_id}")
+        await update.message.reply_text(f"Added {amount} credits to {target_id}")
         try:
-            await context.bot.send_message(target_id, f"💰 Admin added {amount} credits!\nBalance: {get_credits(target_id)}")
+            await context.bot.send_message(target_id, f"Admin added {amount} credits!\nBalance: {get_credits(target_id)}")
         except:
             pass
     except:
@@ -263,7 +262,7 @@ async def ban_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         target_id = int(context.args[0])
         banned_users.add(target_id)
-        await update.message.reply_text(f"✅ Banned user {target_id}")
+        await update.message.reply_text(f"Banned user {target_id}")
     except:
         await update.message.reply_text("Usage: /banuser user_id")
 
@@ -274,7 +273,7 @@ async def unban_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         target_id = int(context.args[0])
         banned_users.discard(target_id)
-        await update.message.reply_text(f"✅ Unbanned user {target_id}")
+        await update.message.reply_text(f"Unbanned user {target_id}")
     except:
         await update.message.reply_text("Usage: /unbanuser user_id")
 
@@ -291,12 +290,12 @@ async def broadcast_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     count = 0
     for uid in list(user_list)[:50]:
         try:
-            await context.bot.send_message(uid, f"📢 *Broadcast:*\n\n{text}", parse_mode='Markdown')
+            await context.bot.send_message(uid, f"Broadcast:\n\n{text}")
             count += 1
         except:
             pass
     
-    await update.message.reply_text(f"✅ Sent to {count} users")
+    await update.message.reply_text(f"Sent to {count} users")
 
 
 async def backup_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -321,51 +320,48 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = query.from_user.id
     
     if user_id in banned_users:
-        await query.edit_message_text("❌ You are banned.")
+        await query.edit_message_text("You are banned.")
         return
     
     save_user(user_id)
     data = query.data
     credits = get_credits(user_id)
 
-    # Main menu
     if data == "main_menu":
         keyboard = [
-            [InlineKeyboardButton("🇧🇩 Banglish → English (FREE)", callback_data="banglish_quick")],
-            [InlineKeyboardButton("📝 Set Translate Mode", callback_data="set_mode")],
-            [InlineKeyboardButton("🎙 Voice Translate", callback_data="voice_info")],
-            [InlineKeyboardButton("📄 Document", callback_data="doc_translate")],
-            [InlineKeyboardButton("📸 OCR", callback_data="ocr_translate")],
-            [InlineKeyboardButton("🌐 Multi-Lang", callback_data="multi_translate")],
-            [InlineKeyboardButton("🔤 Transliteration", callback_data="transliteration")],
-            [InlineKeyboardButton("🎨 AI Image", callback_data="ai_image")],
-            [InlineKeyboardButton("🖼 BG Remove", callback_data="bg_remove")],
-            [InlineKeyboardButton("✨ Enhance", callback_data="image_enhance")],
-            [InlineKeyboardButton("🎬 Video→GIF", callback_data="video_to_gif")],
-            [InlineKeyboardButton("🎵 Audio→Text", callback_data="audio_to_text")],
-            [InlineKeyboardButton("😂 Meme", callback_data="meme_gen")],
-            [InlineKeyboardButton("🏷 Sticker", callback_data="sticker_make")],
-            [InlineKeyboardButton("🎤 Voice Clone", callback_data="voice_clone")],
-            [InlineKeyboardButton("💰 Credits", callback_data="my_credits")],
-            [InlineKeyboardButton("ℹ️ Help", callback_data="help")]
+            [InlineKeyboardButton("Banglish → English (FREE)", callback_data="banglish_quick")],
+            [InlineKeyboardButton("Set Translate Mode", callback_data="set_mode")],
+            [InlineKeyboardButton("Voice Translate", callback_data="voice_info")],
+            [InlineKeyboardButton("Document", callback_data="doc_translate")],
+            [InlineKeyboardButton("OCR", callback_data="ocr_translate")],
+            [InlineKeyboardButton("Multi-Lang", callback_data="multi_translate")],
+            [InlineKeyboardButton("Transliteration", callback_data="transliteration")],
+            [InlineKeyboardButton("AI Image", callback_data="ai_image")],
+            [InlineKeyboardButton("BG Remove", callback_data="bg_remove")],
+            [InlineKeyboardButton("Enhance", callback_data="image_enhance")],
+            [InlineKeyboardButton("Video→GIF", callback_data="video_to_gif")],
+            [InlineKeyboardButton("Audio→Text", callback_data="audio_to_text")],
+            [InlineKeyboardButton("Meme", callback_data="meme_gen")],
+            [InlineKeyboardButton("Sticker", callback_data="sticker_make")],
+            [InlineKeyboardButton("Voice Clone", callback_data="voice_clone")],
+            [InlineKeyboardButton("Credits", callback_data="my_credits")],
+            [InlineKeyboardButton("Help", callback_data="help")]
         ]
         if user_id == ADMIN_ID:
-            keyboard.append([InlineKeyboardButton("👑 ADMIN", callback_data="admin_panel")])
+            keyboard.append([InlineKeyboardButton("ADMIN", callback_data="admin_panel")])
         
-        await query.edit_message_text(f"🏠 *Main Menu*\n💰 Balance: {credits} credits", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
+        await query.edit_message_text(f"Main Menu\nBalance: {credits} credits", reply_markup=InlineKeyboardMarkup(keyboard))
 
-    # Banglish quick set
     elif data == "banglish_quick":
-        # সরাসরি Banglish → English সেট করে দাও
+        # Banglish → English ফিক্সড মোড
         user_lang[user_id] = {'from': 'bn-en', 'to': 'en'}
         await query.edit_message_text(
-            "🇧🇩 *Banglish → English Mode Active!*\n\n"
+            "Banglish → English Mode Active!\n\n"
             "এখন তুমি Banglish (Roman Bengali) টাইপ করলেই বট অটো ইংরেজি অনুবাদ করে দেবে।\n\n"
-            "উদাহরণ:\n"
-            "• `ami tomake bhalobashi` → I love you\n"
-            "• `tumi kemon acho` → How are you\n\n"
-            "🆓 সম্পূর্ণ ফ্রি!",
-            parse_mode='Markdown'
+            "Example:\n"
+            "ami tomake bhalobashi → I love you\n"
+            "tumi kemon acho → How are you\n\n"
+            "সম্পূর্ণ ফ্রি!"
         )
 
     elif data == "set_mode":
@@ -373,8 +369,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for code, name in LANG_MAP.items():
             if code != 'auto':
                 keyboard.append([InlineKeyboardButton(name, callback_data=f"from_{code}")])
-        keyboard.append([InlineKeyboardButton("🔙 Back", callback_data="main_menu")])
-        await query.edit_message_text("🌐 *From Language:*", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
+        keyboard.append([InlineKeyboardButton("Back", callback_data="main_menu")])
+        await query.edit_message_text("From Language:", reply_markup=InlineKeyboardMarkup(keyboard))
 
     elif data.startswith("from_"):
         from_lang = data[5:]
@@ -383,171 +379,171 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for code, name in LANG_MAP.items():
             if code != from_lang and code != 'auto' and code != 'bn-en':
                 keyboard.append([InlineKeyboardButton(name, callback_data=f"to_{code}")])
-        keyboard.append([InlineKeyboardButton("🔙 Back", callback_data="set_mode")])
-        await query.edit_message_text(f"✅ From: *{LANG_MAP[from_lang]}*\n\n*To Language:*", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
+        keyboard.append([InlineKeyboardButton("Back", callback_data="set_mode")])
+        await query.edit_message_text(f"From: {LANG_MAP[from_lang]}\n\nTo Language:", reply_markup=InlineKeyboardMarkup(keyboard))
 
     elif data.startswith("to_"):
         to_lang = data[3:]
         if user_id in user_lang:
             user_lang[user_id]['to'] = to_lang
             frm = user_lang[user_id]['from']
-            await query.edit_message_text(f"✅ *Mode Active!*\n📤 From: {LANG_MAP[frm]}\n📥 To: {LANG_MAP[to_lang]}\n\nSend text or voice!", parse_mode='Markdown')
+            await query.edit_message_text(f"Mode Active!\nFrom: {LANG_MAP[frm]}\nTo: {LANG_MAP[to_lang]}\n\nSend text or voice!")
 
     elif data == "voice_info":
-        await query.edit_message_text("🎙 *Voice Translate*\n\nSet mode first, then send voice message.\n\n✅ FREE!", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 Set Mode", callback_data="set_mode")], [InlineKeyboardButton("🔙 Back", callback_data="main_menu")]]))
+        await query.edit_message_text("Voice Translate\n\nSet mode first, then send voice message.\n\nFREE!", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Set Mode", callback_data="set_mode")], [InlineKeyboardButton("Back", callback_data="main_menu")]]))
 
     elif data == "doc_translate":
         if credits < CREDIT_COSTS['document_translate']:
             await query.answer(f"Need {CREDIT_COSTS['document_translate']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_document'}
-        await query.edit_message_text("📄 *Send PDF/Word/TXT file*\n\nCost: 3 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send PDF/Word/TXT file\n\nCost: 3 credits")
 
     elif data == "ocr_translate":
         if credits < CREDIT_COSTS['ocr_translate']:
             await query.answer(f"Need {CREDIT_COSTS['ocr_translate']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_ocr'}
-        await query.edit_message_text("📸 *Send image with text*\n\nCost: 2 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send image with text\n\nCost: 2 credits")
 
     elif data == "multi_translate":
         if credits < CREDIT_COSTS['multi_translate']:
             await query.answer(f"Need {CREDIT_COSTS['multi_translate']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_multi'}
-        await query.edit_message_text("🌐 *Send text to translate to 5 languages*\n\nCost: 2 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send text to translate to 5 languages\n\nCost: 2 credits")
 
     elif data == "transliteration":
         if credits < CREDIT_COSTS['transliteration']:
             await query.answer(f"Need {CREDIT_COSTS['transliteration']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_transliteration'}
-        await query.edit_message_text("🔤 *Send Bengali text*\n\nCost: 1 credit", parse_mode='Markdown')
+        await query.edit_message_text("Send Bengali text\n\nCost: 1 credit")
 
     elif data == "ai_image":
         if credits < CREDIT_COSTS['ai_image']:
             await query.answer(f"Need {CREDIT_COSTS['ai_image']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_ai_prompt'}
-        await query.edit_message_text("🎨 *Send prompt for AI image*\nExample: 'a cat wearing sunglasses'\n\nCost: 5 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send prompt for AI image\nExample: 'a cat wearing sunglasses'\n\nCost: 5 credits")
 
     elif data == "bg_remove":
         if credits < CREDIT_COSTS['bg_remove']:
             await query.answer(f"Need {CREDIT_COSTS['bg_remove']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_bg_photo'}
-        await query.edit_message_text("🖼 *Send photo to process*\n\nCost: 3 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send photo to process\n\nCost: 3 credits")
 
     elif data == "image_enhance":
         if credits < CREDIT_COSTS['image_enhance']:
             await query.answer(f"Need {CREDIT_COSTS['image_enhance']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_enhance_photo'}
-        await query.edit_message_text("✨ *Send photo to enhance*\n\nCost: 2 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send photo to enhance\n\nCost: 2 credits")
 
     elif data == "video_to_gif":
         if credits < CREDIT_COSTS['video_to_gif']:
             await query.answer(f"Need {CREDIT_COSTS['video_to_gif']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_gif_video'}
-        await query.edit_message_text("🎬 *Send video (max 10 sec)*\n\nCost: 5 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send video (max 10 sec)\n\nCost: 5 credits")
 
     elif data == "audio_to_text":
         if credits < CREDIT_COSTS['audio_to_text']:
             await query.answer(f"Need {CREDIT_COSTS['audio_to_text']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_audio_file'}
-        await query.edit_message_text("🎵 *Send audio file*\n\nCost: 3 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send audio file\n\nCost: 3 credits")
 
     elif data == "meme_gen":
         if credits < CREDIT_COSTS['meme_generate']:
             await query.answer(f"Need {CREDIT_COSTS['meme_generate']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_meme_text'}
-        await query.edit_message_text("😂 *Send: top text | bottom text*\n\nCost: 3 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send: top text | bottom text\n\nCost: 3 credits")
 
     elif data == "sticker_make":
         if credits < CREDIT_COSTS['sticker_make']:
             await query.answer(f"Need {CREDIT_COSTS['sticker_make']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_sticker_photo'}
-        await query.edit_message_text("🏷 *Send photo for sticker*\n\nCost: 2 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send photo for sticker\n\nCost: 2 credits")
 
     elif data == "voice_clone":
         if credits < CREDIT_COSTS['voice_clone']:
             await query.answer(f"Need {CREDIT_COSTS['voice_clone']} credits!", show_alert=True)
             return
         user_state[user_id] = {'state': 'waiting_clone_voice'}
-        await query.edit_message_text("🎤 *Send voice sample first*\n\nCost: 15 credits", parse_mode='Markdown')
+        await query.edit_message_text("Send voice sample first\n\nCost: 15 credits")
 
     elif data == "my_credits":
-        msg = f"💰 *Your Credits: {credits}*\n\n📋 *Pricing:*\n"
+        msg = f"Your Credits: {credits}\n\nPricing:\n"
         for feature, cost in CREDIT_COSTS.items():
-            emoji = "🆓" if cost == 0 else "💎"
+            emoji = "FREE" if cost == 0 else "Premium"
             msg += f"{emoji} {feature.replace('_', ' ').title()}: {cost}cr\n"
-        msg += f"\n🎁 /daily (+{DAILY_BONUS})"
-        await query.edit_message_text(msg, parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📩 Request Credits", callback_data="request_credits")], [InlineKeyboardButton("🔙 Back", callback_data="main_menu")]]))
+        msg += f"\n/daily (+{DAILY_BONUS})"
+        await query.edit_message_text(msg, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Request Credits", callback_data="request_credits")], [InlineKeyboardButton("Back", callback_data="main_menu")]]))
 
     elif data == "request_credits":
         if ADMIN_ID != 0:
             try:
-                await context.bot.send_message(ADMIN_ID, f"📩 *Credit Request*\n👤 {query.from_user.full_name}\n🆔 `{user_id}`\n💰 {credits}cr\n\n/givecredits {user_id} amount", parse_mode='Markdown')
-                await query.edit_message_text("✅ Request sent!", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="main_menu")]]))
+                await context.bot.send_message(ADMIN_ID, f"Credit Request\nUser: {query.from_user.full_name}\nID: {user_id}\nCredits: {credits}\n\n/givecredits {user_id} amount")
+                await query.edit_message_text("Request sent!", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Back", callback_data="main_menu")]]))
             except:
-                await query.edit_message_text("❌ Failed.")
+                await query.edit_message_text("Failed.")
 
     elif data == "admin_panel":
         if user_id != ADMIN_ID:
             await query.answer("Access Denied!", show_alert=True)
             return
-        msg = f"👑 *Admin*\n👥 Users: {len(user_list)}\n💰 Credits: {sum(user_credits.values())}\n🚫 Banned: {len(banned_users)}"
+        msg = f"Admin\nUsers: {len(user_list)}\nCredits: {sum(user_credits.values())}\nBanned: {len(banned_users)}"
         keyboard = [
-            [InlineKeyboardButton("📊 Stats", callback_data="admin_stats")],
-            [InlineKeyboardButton("👥 Users", callback_data="admin_users")],
-            [InlineKeyboardButton("💳 Give Credits", callback_data="admin_give_info")],
-            [InlineKeyboardButton("🔙 Back", callback_data="main_menu")]
+            [InlineKeyboardButton("Stats", callback_data="admin_stats")],
+            [InlineKeyboardButton("Users", callback_data="admin_users")],
+            [InlineKeyboardButton("Give Credits", callback_data="admin_give_info")],
+            [InlineKeyboardButton("Back", callback_data="main_menu")]
         ]
-        await query.edit_message_text(msg, parse_mode='Markdown', reply_markup=InlineKeyboardMarkup(keyboard))
+        await query.edit_message_text(msg, reply_markup=InlineKeyboardMarkup(keyboard))
 
     elif data == "admin_stats":
         if user_id != ADMIN_ID: return
-        await query.edit_message_text(f"👥 {len(user_list)} users\n💰 {sum(user_credits.values())} credits\n🚫 {len(banned_users)} banned", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="admin_panel")]]))
+        await query.edit_message_text(f"{len(user_list)} users\n{sum(user_credits.values())} credits\n{len(banned_users)} banned", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Back", callback_data="admin_panel")]]))
 
     elif data == "admin_users":
         if user_id != ADMIN_ID: return
-        users_text = "👥 *Users:*\n"
+        users_text = "Users:\n"
         for i, uid in enumerate(list(user_list)[:25], 1):
-            users_text += f"{i}. `{uid}` - {get_credits(uid)}cr\n"
-        await query.edit_message_text(users_text[:4000], parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="admin_panel")]]))
+            users_text += f"{i}. {uid} - {get_credits(uid)}cr\n"
+        await query.edit_message_text(users_text[:4000], reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Back", callback_data="admin_panel")]]))
 
     elif data == "admin_give_info":
-        await query.edit_message_text("💳 `/givecredits user_id amount`\nExample: `/givecredits 123456 50`", parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="admin_panel")]]))
+        await query.edit_message_text("/givecredits user_id amount\nExample: /givecredits 123456 50", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Back", callback_data="admin_panel")]]))
 
     elif data == "help":
         help_text = """
-ℹ️ *Help*
+Help
 
-🆓 *FREE:*
-• Text & Voice Translation
-• 🇧🇩 Banglish → English
+FREE:
+- Text & Voice Translation
+- Banglish → English
 
-💎 *Premium (Need Credits):*
-• Document/OCR/Multi Translate
-• AI Image/BG Remove/Enhance
-• Video→GIF/Audio→Text
-• Meme/Sticker/Voice Clone
+Premium (Need Credits):
+- Document/OCR/Multi Translate
+- AI Image/BG Remove/Enhance
+- Video→GIF/Audio→Text
+- Meme/Sticker/Voice Clone
 
-🎁 /daily - Free credits
-📨 Share referral code
+/daily - Free credits
+Share referral code
 
-👑 *Admin:*
+Admin:
 /stats /givecredits /banuser
 /broadcast /backup
 """
-        await query.edit_message_text(help_text, parse_mode='Markdown', reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="main_menu")]]))
+        await query.edit_message_text(help_text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Back", callback_data="main_menu")]]))
 
 
-# ============ TEXT HANDLER ============
+# ============ TEXT HANDLER (Banglish Fixed) ============
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     text = update.message.text
@@ -557,48 +553,51 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if check_spam(user_id):
-        await update.message.reply_text("⚠️ Slow down! Too many requests.")
+        await update.message.reply_text("Slow down! Too many requests.")
         return
 
     state = user_state.get(user_id, {}).get('state')
 
+    # Multi-Language
     if state == 'waiting_multi':
         if not deduct_credits(user_id, CREDIT_COSTS['multi_translate']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['multi_translate']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['multi_translate']} credits!")
             return
         
         langs = ['en', 'bn', 'ar', 'hi', 'es']
-        result = f"📝 *Original:*\n{text}\n\n"
+        result = f"Original:\n{text}\n\n"
         for lang in langs:
             try:
                 trans = GoogleTranslator(source='auto', target=lang).translate(text)
-                result += f"🌐 *{LANG_MAP[lang]}:*\n{trans}\n\n"
+                result += f"{LANG_MAP[lang]}:\n{trans}\n\n"
             except:
                 pass
         
-        result += f"💰 {CREDIT_COSTS['multi_translate']}cr used. Balance: {get_credits(user_id)}"
-        await update.message.reply_text(result, parse_mode='Markdown')
+        result += f"{CREDIT_COSTS['multi_translate']} credits used. Balance: {get_credits(user_id)}"
+        await update.message.reply_text(result)
         user_state.pop(user_id, None)
         return
 
+    # Transliteration
     if state == 'waiting_transliteration':
         if not deduct_credits(user_id, CREDIT_COSTS['transliteration']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['transliteration']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['transliteration']} credits!")
             return
         try:
             trans = GoogleTranslator(source='bn', target='en').translate(text)
-            await update.message.reply_text(f"🔤 *Banglish:*\n{trans}\n\n💰 {CREDIT_COSTS['transliteration']}cr used", parse_mode='Markdown')
+            await update.message.reply_text(f"Banglish:\n{trans}\n\n{CREDIT_COSTS['transliteration']} credits used")
         except:
-            await update.message.reply_text("❌ Transliteration failed")
+            await update.message.reply_text("Transliteration failed")
         user_state.pop(user_id, None)
         return
 
+    # AI Image
     if state == 'waiting_ai_prompt':
         if not deduct_credits(user_id, CREDIT_COSTS['ai_image']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['ai_image']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['ai_image']} credits!")
             return
         
-        await update.message.reply_text("🎨 Generating AI image... (30-60 sec)")
+        await update.message.reply_text("Generating AI image... (30-60 sec)")
         try:
             encoded_prompt = urllib.parse.quote(text)
             image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=512&height=512&nologo=true"
@@ -609,19 +608,20 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 with open(img_path, 'wb') as f:
                     f.write(response.content)
                 with open(img_path, 'rb') as f:
-                    await update.message.reply_photo(f, caption=f"🎨 *{text}*\n💰 {CREDIT_COSTS['ai_image']}cr used", parse_mode='Markdown')
+                    await update.message.reply_photo(f, caption=f"AI Image: {text}\n{CREDIT_COSTS['ai_image']} credits used")
                 os.remove(img_path)
             else:
-                await update.message.reply_text("❌ Failed. Try different prompt.")
+                await update.message.reply_text("Failed. Try different prompt.")
         except Exception as e:
-            await update.message.reply_text(f"❌ Error: {str(e)[:100]}")
+            await update.message.reply_text(f"Error: {str(e)[:100]}")
         
         user_state.pop(user_id, None)
         return
 
+    # Meme
     if state == 'waiting_meme_text':
         if not deduct_credits(user_id, CREDIT_COSTS['meme_generate']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['meme_generate']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['meme_generate']} credits!")
             return
         
         parts = text.split('|')
@@ -642,42 +642,42 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             meme_path = f"meme_{user_id}.jpg"
             img.save(meme_path)
             with open(meme_path, 'rb') as f:
-                await update.message.reply_photo(f, caption=f"😂 *Meme!*\n💰 {CREDIT_COSTS['meme_generate']}cr used", parse_mode='Markdown')
+                await update.message.reply_photo(f, caption=f"Meme!\n{CREDIT_COSTS['meme_generate']} credits used")
             os.remove(meme_path)
         except Exception as e:
-            await update.message.reply_text(f"❌ Error: {e}")
+            await update.message.reply_text(f"Error: {e}")
         
         user_state.pop(user_id, None)
         return
 
+    # Voice Clone Text
     if state == 'waiting_clone_text':
-        await update.message.reply_text(f"🎤 Voice Clone requested!\n📝 Text: {text}\n💰 {CREDIT_COSTS['voice_clone']}cr used\nBalance: {get_credits(user_id)}")
+        await update.message.reply_text(f"Voice Clone requested!\nText: {text}\n{CREDIT_COSTS['voice_clone']} credits used\nBalance: {get_credits(user_id)}")
         user_state.pop(user_id, None)
         return
 
-    # ========== NORMAL TRANSLATION (including Banglish) ==========
+    # ========== NORMAL TRANSLATION (Banglish সহ) ==========
     if user_id in user_lang and 'to' in user_lang[user_id]:
         src = user_lang[user_id]['from']
         dest = user_lang[user_id]['to']
         
-        # Banglish -> use auto detect
+        # Banglish এর জন্য source='bn' ব্যবহার করব (Google রোমানাইজড বাংলা চিনবে)
         if src == 'bn-en':
-            src = 'auto'
+            src = 'bn'   # ← এটাই ফিক্স! আগে 'auto' দিলে চিনতে পারছিল না
         
         try:
             await update.message.chat.send_action('typing')
             translated = GoogleTranslator(source=src, target=dest).translate(text)
-            await update.message.reply_text(
-                f"📤 *Original:*\n{text}\n\n📥 *Translated ({LANG_MAP.get(dest, dest)}):*\n{translated}\n\n"
-                + ("🆓 FREE" if CREDIT_COSTS.get('translate', 0) == 0 else f"💰 {CREDIT_COSTS['translate']}cr used"),
-                parse_mode='Markdown'
-            )
+            
+            # কপি-ফ্রেন্ডলি আউটপুট
+            response = f"Original:\n{text}\n\nTranslated ({LANG_MAP.get(dest, dest)}):\n{translated}\n\nFREE"
+            await update.message.reply_text(response)
         except Exception as e:
-            await update.message.reply_text(f"❌ Translation failed: {e}")
+            await update.message.reply_text(f"Translation failed: {e}")
         return
 
     if not user_state.get(user_id):
-        await update.message.reply_text("👋 Use /start for menu or set translation mode.", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📝 Set Mode", callback_data="set_mode")]]))
+        await update.message.reply_text("Use /start for menu or set translation mode.", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Set Mode", callback_data="set_mode")]]))
 
 
 # ============ DOCUMENT HANDLER ============
@@ -689,7 +689,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if not deduct_credits(user_id, CREDIT_COSTS['document_translate']):
-        await update.message.reply_text(f"❌ Need {CREDIT_COSTS['document_translate']} credits!")
+        await update.message.reply_text(f"Need {CREDIT_COSTS['document_translate']} credits!")
         return
     
     doc = update.message.document
@@ -717,18 +717,18 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         os.remove(tmp_path)
         
         if not text.strip():
-            await update.message.reply_text("❌ No text found.")
+            await update.message.reply_text("No text found.")
             user_state.pop(user_id, None)
             return
         
         src = user_lang.get(user_id, {}).get('from', 'auto')
         dest = user_lang.get(user_id, {}).get('to', 'en')
-        if src == 'bn-en': src = 'auto'
+        if src == 'bn-en': src = 'bn'
         translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(text[:1500])
         
-        await update.message.reply_text(f"📄 *Translated:*\n{translated[:1000]}...\n\n💰 {CREDIT_COSTS['document_translate']}cr used", parse_mode='Markdown')
+        await update.message.reply_text(f"Translated:\n{translated[:1000]}...\n\n{CREDIT_COSTS['document_translate']} credits used")
     except Exception as e:
-        await update.message.reply_text(f"❌ Error: {e}")
+        await update.message.reply_text(f"Error: {e}")
     
     user_state.pop(user_id, None)
 
@@ -749,7 +749,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if state == 'waiting_ocr':
         if not deduct_credits(user_id, CREDIT_COSTS['ocr_translate']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['ocr_translate']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['ocr_translate']} credits!")
             os.remove(photo_path)
             return
         
@@ -757,30 +757,30 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             img = Image.open(photo_path)
             text = pytesseract.image_to_string(img)
             if not text.strip():
-                await update.message.reply_text("❌ No text found.")
+                await update.message.reply_text("No text found.")
                 os.remove(photo_path)
                 user_state.pop(user_id, None)
                 return
             
             src = user_lang.get(user_id, {}).get('from', 'auto')
             dest = user_lang.get(user_id, {}).get('to', 'en')
-            if src == 'bn-en': src = 'auto'
+            if src == 'bn-en': src = 'bn'
             translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(text[:500])
             
-            await update.message.reply_text(f"📸 *OCR:*\n{text[:300]}\n\n🌐 *Translated:*\n{translated[:500]}\n\n💰 {CREDIT_COSTS['ocr_translate']}cr used", parse_mode='Markdown')
+            await update.message.reply_text(f"OCR:\n{text[:300]}\n\nTranslated:\n{translated[:500]}\n\n{CREDIT_COSTS['ocr_translate']} credits used")
         except Exception as e:
-            await update.message.reply_text(f"❌ Error: {e}")
+            await update.message.reply_text(f"Error: {e}")
         
         os.remove(photo_path)
         user_state.pop(user_id, None)
     
     elif state == 'waiting_bg_photo':
         if not deduct_credits(user_id, CREDIT_COSTS['bg_remove']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['bg_remove']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['bg_remove']} credits!")
             os.remove(photo_path)
             return
         
-        await update.message.reply_text("🖼 Processing image...")
+        await update.message.reply_text("Processing image...")
         try:
             img = Image.open(photo_path).convert('RGBA')
             enhanced = ImageEnhance.Contrast(img).enhance(1.3)
@@ -790,18 +790,18 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             enhanced.save(output_path, 'PNG')
             
             with open(output_path, 'rb') as f:
-                await update.message.reply_photo(f, caption=f"🖼 *Processed!*\n💰 {CREDIT_COSTS['bg_remove']}cr used\nBalance: {get_credits(user_id)}", parse_mode='Markdown')
+                await update.message.reply_photo(f, caption=f"Processed!\n{CREDIT_COSTS['bg_remove']} credits used\nBalance: {get_credits(user_id)}")
             
             os.remove(output_path)
         except Exception as e:
-            await update.message.reply_text(f"❌ Error: {e}")
+            await update.message.reply_text(f"Error: {e}")
         
         os.remove(photo_path)
         user_state.pop(user_id, None)
     
     elif state == 'waiting_enhance_photo':
         if not deduct_credits(user_id, CREDIT_COSTS['image_enhance']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['image_enhance']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['image_enhance']} credits!")
             os.remove(photo_path)
             return
         
@@ -816,18 +816,18 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             img.save(enhanced_path, quality=95)
             
             with open(enhanced_path, 'rb') as f:
-                await update.message.reply_photo(f, caption=f"✨ *Enhanced!*\n💰 {CREDIT_COSTS['image_enhance']}cr used", parse_mode='Markdown')
+                await update.message.reply_photo(f, caption=f"Enhanced!\n{CREDIT_COSTS['image_enhance']} credits used")
             
             os.remove(enhanced_path)
         except Exception as e:
-            await update.message.reply_text(f"❌ Error: {e}")
+            await update.message.reply_text(f"Error: {e}")
         
         os.remove(photo_path)
         user_state.pop(user_id, None)
     
     elif state == 'waiting_sticker_photo':
         if not deduct_credits(user_id, CREDIT_COSTS['sticker_make']):
-            await update.message.reply_text(f"❌ Need {CREDIT_COSTS['sticker_make']} credits!")
+            await update.message.reply_text(f"Need {CREDIT_COSTS['sticker_make']} credits!")
             os.remove(photo_path)
             return
         
@@ -844,9 +844,9 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_sticker(f)
             
             os.remove(sticker_path)
-            await update.message.reply_text(f"🏷 *Sticker!*\n💰 {CREDIT_COSTS['sticker_make']}cr used", parse_mode='Markdown')
+            await update.message.reply_text(f"Sticker created!\n{CREDIT_COSTS['sticker_make']} credits used")
         except Exception as e:
-            await update.message.reply_text(f"❌ Error: {e}")
+            await update.message.reply_text(f"Error: {e}")
         
         os.remove(photo_path)
         user_state.pop(user_id, None)
@@ -863,18 +863,18 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     state = user_state.get(user_id, {}).get('state')
     
     if state == 'waiting_clone_voice':
-        await update.message.reply_text("🎤 Voice sample received! Now send text to speak.")
+        await update.message.reply_text("Voice sample received! Now send text to speak.")
         user_state[user_id] = {'state': 'waiting_clone_text'}
         return
     
     if user_id not in user_lang or 'to' not in user_lang[user_id]:
-        await update.message.reply_text("⚠️ Set mode first!", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 Set Mode", callback_data="set_mode")]]))
+        await update.message.reply_text("Set mode first!", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Set Mode", callback_data="set_mode")]]))
         return
 
     src = user_lang[user_id]['from']
     dest = user_lang[user_id]['to']
-    if src == 'bn-en': src = 'auto'   # Banglish voice
-    processing_msg = await update.message.reply_text("🎙 Processing...")
+    if src == 'bn-en': src = 'bn'   # Banglish voice fix
+    processing_msg = await update.message.reply_text("Processing voice...")
 
     try:
         voice_file = await update.message.voice.get_file()
@@ -884,7 +884,7 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         wav_path = convert_ogg_to_wav(ogg_path)
         if not wav_path or not os.path.exists(wav_path):
-            await processing_msg.edit_text("❌ Conversion failed.")
+            await processing_msg.edit_text("Conversion failed.")
             if os.path.exists(ogg_path): os.remove(ogg_path)
             return
 
@@ -907,11 +907,11 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         translated = GoogleTranslator(source=src if src != 'auto' else 'auto', target=dest).translate(detected_text)
 
-        await processing_msg.edit_text(f"🎙 *Voice:*\n{detected_text}\n\n📥 *Translated:*\n{translated}\n\n🆓 FREE", parse_mode='Markdown')
+        await processing_msg.edit_text(f"Voice:\n{detected_text}\n\nTranslated:\n{translated}\n\nFREE")
     except sr.UnknownValueError:
-        await processing_msg.edit_text("❌ Could not understand. Speak clearly.")
+        await processing_msg.edit_text("Could not understand. Speak clearly.")
     except Exception as e:
-        await processing_msg.edit_text(f"❌ Error: {str(e)[:100]}")
+        await processing_msg.edit_text(f"Error: {str(e)[:100]}")
 
 
 # ============ VIDEO HANDLER ============
@@ -923,10 +923,10 @@ async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if not deduct_credits(user_id, CREDIT_COSTS['video_to_gif']):
-        await update.message.reply_text(f"❌ Need {CREDIT_COSTS['video_to_gif']} credits!")
+        await update.message.reply_text(f"Need {CREDIT_COSTS['video_to_gif']} credits!")
         return
     
-    await update.message.reply_text("🎬 Converting to GIF...")
+    await update.message.reply_text("Converting to GIF...")
     
     try:
         video_file = await update.message.video.get_file()
@@ -938,14 +938,14 @@ async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         if gif_path and os.path.exists(gif_path):
             with open(gif_path, 'rb') as f:
-                await update.message.reply_animation(f, caption=f"🎬 *GIF!*\n💰 {CREDIT_COSTS['video_to_gif']}cr used", parse_mode='Markdown')
+                await update.message.reply_animation(f, caption=f"GIF created!\n{CREDIT_COSTS['video_to_gif']} credits used")
             os.remove(gif_path)
         else:
-            await update.message.reply_text("❌ Conversion failed.")
+            await update.message.reply_text("Conversion failed.")
         
         os.remove(video_path)
     except Exception as e:
-        await update.message.reply_text(f"❌ Error: {e}")
+        await update.message.reply_text(f"Error: {e}")
     
     user_state.pop(user_id, None)
 
@@ -959,10 +959,10 @@ async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     
     if not deduct_credits(user_id, CREDIT_COSTS['audio_to_text']):
-        await update.message.reply_text(f"❌ Need {CREDIT_COSTS['audio_to_text']} credits!")
+        await update.message.reply_text(f"Need {CREDIT_COSTS['audio_to_text']} credits!")
         return
     
-    await update.message.reply_text("🎵 Processing audio...")
+    await update.message.reply_text("Processing audio...")
     
     try:
         audio_file = await update.message.audio.get_file() if update.message.audio else await update.message.voice.get_file()
@@ -978,14 +978,14 @@ async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 audio_data = recognizer.record(source)
                 text = recognizer.recognize_google(audio_data)
             
-            await update.message.reply_text(f"🎵 *Text:*\n{text}\n\n💰 {CREDIT_COSTS['audio_to_text']}cr used", parse_mode='Markdown')
+            await update.message.reply_text(f"Text:\n{text}\n\n{CREDIT_COSTS['audio_to_text']} credits used")
             os.remove(wav_path)
         else:
-            await update.message.reply_text("❌ Conversion failed.")
+            await update.message.reply_text("Conversion failed.")
         
         os.remove(ogg_path)
     except Exception as e:
-        await update.message.reply_text(f"❌ Error: {e}")
+        await update.message.reply_text(f"Error: {e}")
     
     user_state.pop(user_id, None)
 
